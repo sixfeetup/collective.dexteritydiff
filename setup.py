@@ -1,11 +1,23 @@
 from setuptools import setup, find_packages
 import os
 
-version = '0.1b4'
+
+def get_git_version(abbrev=4):
+    from subprocess import Popen, PIPE
+    try:
+        p = Popen(['git', 'rev-parse', 'HEAD'],
+                  stdout=PIPE, stderr=PIPE)
+        p.stderr.close()
+        line = p.stdout.readlines()[0]
+        return '-' + line.strip()[:abbrev]
+    except:
+        return ''
+
+version = '0.1b4' + get_git_version()
 
 setup(name='collective.dexteritydiff',
       version=version,
-      description='Provide the DexterityCompoundDiff diff type for Products.CMFEditions, '        
+      description='Provide the DexterityCompoundDiff diff type for Products.CMFEditions, '
           'analogous to ATCompoudDiff.',
       long_description=open(os.path.join('collective', 'dexteritydiff', 'README.txt')).read() + "\n" +
                        open(os.path.join('docs', 'HISTORY.txt')).read(),
@@ -38,7 +50,7 @@ setup(name='collective.dexteritydiff',
             'plone.namedfile',
             'plone.formwidget.namedfile',
         ]
-      },      
+      },
       entry_points="""
       # -*- Entry points: -*-
       """,
