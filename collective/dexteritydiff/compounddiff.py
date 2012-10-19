@@ -5,16 +5,19 @@ from .choicediff import ChoiceDiff
 from .filefields import FILE_FIELD_TYPES
 from .filelistdiff import DexterityFileListDiff
 from .richtextdiff import RichTextDiff
+from .datagriddiff import DictRowListDiff
 from .utils import get_schemas
 from Products.CMFDiffTool.FieldDiff import FieldDiff
 from Products.CMFDiffTool.ListDiff import ListDiff
 from Products.CMFDiffTool.TextDiff import TextDiff
 from plone.app.textfield import RichText
+# support diffs for the DataGridField type
+from collective.z3cform.datagridfield import DictRow
 from plone.autoform.base import AutoFields
 from z3c.form.interfaces import INPUT_MODE
 from zope.globalrequest import getRequest
-from zope.schema import (Bytes, Iterable, Container, Text, getFieldsInOrder, Date, Datetime, Time, 
-    Choice, Bool)
+from zope.schema import (Bytes, Iterable, Container, Text, getFieldsInOrder, 
+    Date, Datetime, Time, Choice, Bool)
 
 # TODO: Perhaps this can be replaced with some kind of Zope 3 style adaptation, in order to 
 # provide better extensibility.
@@ -42,6 +45,7 @@ FALL_BACK_DIFF_TYPE = FieldDiff
 # handling of certain value types. (rafaelbco)
 VALUE_TYPES_AND_DIFF_TYPES_RELATION = [
     (FILE_FIELD_TYPES, DexterityFileListDiff),
+    (DictRow, DictRowListDiff),
 ]
 """
 When a field is detected to be a list-like field we use this list in the same fashion as
@@ -78,10 +82,10 @@ class DexterityCompoundDiff(object):
         Compute the differences between 2 objects.
         
         Return: a sequence of `IDifference` objects.
-        """        
-        (default_schema, additional_schemata) = get_schemas(obj1)                
-        diffs = self._diff_schema(obj1, obj2, default_schema, 'default')        
-        for schema in additional_schemata:        
+        """
+        (default_schema, additional_schemata) = get_schemas(obj1)
+        diffs = self._diff_schema(obj1, obj2, default_schema, 'default')
+        for schema in additional_schemata:
             diffs.extend(self._diff_schema(obj1, obj2, schema, 'metadata'))
         
         return diffs
