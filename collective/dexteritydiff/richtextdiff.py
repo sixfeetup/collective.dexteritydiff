@@ -5,7 +5,7 @@ class RichTextDiff(CMFDTHtmlDiff):
     """diff p.a.textfield rich text fields
     """
     def _parseField(self, value, filename=None):
-        if value is None:
+        if not value:
             value = ''
         else:
             value = value.raw
